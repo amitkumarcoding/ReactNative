@@ -1,0 +1,5 @@
+{
+    "svg.preview.background": "custom",
+    "workbench.editorAssociations": { "*.svg": "default" },
+    
+}
