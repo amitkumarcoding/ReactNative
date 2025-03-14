@@ -7,6 +7,7 @@ import {
   PanResponder,
   Dimensions,
   StatusBar,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
@@ -52,11 +53,10 @@ const AnimatedPullToRefresh = () => {
 
   const panResponderRef = useRef(
     PanResponder.create({
-      // Allow the PanResponder to start only when the user pulls down at the top of the list
-      onStartShouldSetPanResponder: (_, gestureState) => {
+      onStartShouldSetPanResponderCapture: (_, gestureState) => {
         return scrollPosition.value <= 0 && gestureState.dy > 0;
       },
-      onMoveShouldSetPanResponder: (_, gestureState) => {
+      onMoveShouldSetPanResponderCapture: (_, gestureState) => {
         return scrollPosition.value <= 0 && gestureState.dy > 0;
       },
       onPanResponderMove: (_, gestureState) => {
@@ -117,7 +117,9 @@ const AnimatedPullToRefresh = () => {
           pullDownStyle,
           styles.pullDownStyles,
           { paddingTop: Math.max(insets.top, 15) },
-        ]}>
+        ]}
+        {...panResponderRef.current.panHandlers}
+      >
         <Animated.FlatList
           data={data}
           scrollEventThrottle={16}
@@ -129,8 +131,7 @@ const AnimatedPullToRefresh = () => {
           onScroll={scrollHandler}
           numColumns={2}
           showsVerticalScrollIndicator={false}
-          // Add the PanResponder to the FlatList
-          {...panResponderRef.current.panHandlers}
+          overScrollMode="never"
         />
       </Animated.View>
     </View>
