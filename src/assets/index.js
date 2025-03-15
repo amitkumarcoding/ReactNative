@@ -35,12 +35,14 @@ export {default as ReelIcon} from '../assets/svgs/reel.svg';
 export {default as ReelAltIcon} from '../assets/svgs/reelAlt.svg';
 export {default as CameraIcon} from '../assets/svgs/camera.svg';
 
-export {default as HeartIcon} from '../assets/svgs/Heart.svg'
-export {default as CommentIcon} from '../assets/svgs/Comment.svg'
-export {default as ShareIcon} from '../assets/svgs/Share.svg'
-export {default as MenuIcon} from '../assets/svgs/menu.svg'
-export {default as MusicIcon} from '../assets/svgs/music.svg'
-export {default as TickIcon} from '../assets/svgs/bluetick.svg'
-export {default as PlayIcon} from '../assets/svgs/playBtn.svg'
-export {default as CloseIcon} from '../assets/svgs/cross.svg'
-export {default as RotateIcon} from '../assets/svgs/rotate.svg'
+export {default as HeartIcon} from '../assets/svgs/Heart.svg';
+export {default as CommentIcon} from '../assets/svgs/Comment.svg';
+export {default as ShareIcon} from '../assets/svgs/Share.svg';
+export {default as MenuIcon} from '../assets/svgs/menu.svg';
+export {default as MusicIcon} from '../assets/svgs/music.svg';
+export {default as TickIcon} from '../assets/svgs/bluetick.svg';
+export {default as PlayIcon} from '../assets/svgs/playBtn.svg';
+export {default as CloseIcon} from '../assets/svgs/cross.svg';
+export {default as RotateIcon} from '../assets/svgs/rotate.svg';
+export {default as NotificationIcon} from '../assets/svgs/notification.svg';
+export {default as SearchIconAlt} from '../assets/svgs/search copy.svg';

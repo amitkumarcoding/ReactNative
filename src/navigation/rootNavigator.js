@@ -24,6 +24,7 @@ import ParallaxView from '../components/ParallexView';
 import Leaderboard from '../components/LeaderboardView';
 import MultiSlider from '../components/MultiSlider';
 import AnimatedPullToRefresh from '../components/AnimatedPullToReferesh';
+import HarryPotterUI from '../components/HarryPotterUI';
 
 const Stack = createStackNavigator();
 
@@ -49,6 +50,7 @@ const LoginStack = () => {
       <Stack.Screen name="Leaderboard" component={Leaderboard} />
       <Stack.Screen name="MultiSlider" component={MultiSlider} />
       <Stack.Screen name="AnimatedPullToRefresh" component={AnimatedPullToRefresh} />
+      <Stack.Screen name="HarryPotterUI" component={HarryPotterUI} />
       <Stack.Screen
         name="CarouselCard"
         component={CarouselBackgroundAnimation}
