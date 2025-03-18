@@ -26,21 +26,47 @@ import {
 
 const {width} = Dimensions.get('screen');
 
+const PAGE_SIZE = 6;
+
 const AnimatedPullToRefresh = () => {
   const scrollPosition = useSharedValue(0);
   const insets = useSafeAreaInsets();
   const pullDownPosition = useSharedValue(0);
   const isReadyToRefresh = useSharedValue(false);
   const [isLoaderActive, setIsLoaderActive] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [items, setItems] = useState(data.slice(0, PAGE_SIZE));
 
+  // Refresh Function
   const onRefresh = useCallback(done => {
     setIsLoaderActive(true);
     setTimeout(() => {
       setIsLoaderActive(false);
       isReadyToRefresh.value = false;
+      setPage(1);
+      setItems(data.slice(0, PAGE_SIZE)); // Reset data on refresh
       done();
-    }, 3000);
+    }, 5000);
   }, []);
+
+  // Load More Function
+  const loadMoreData = () => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
+
+    setTimeout(() => {
+      const newPage = page + 1;
+      const newData = data.slice(0, newPage * PAGE_SIZE);
+
+      if (newData.length > items.length) {
+        setItems(newData);
+        setPage(newPage);
+      }
+
+      setIsLoadingMore(false);
+    }, 3000);
+  };
 
   const onPanRelease = () => {
     pullDownPosition.value = withTiming(isReadyToRefresh.value ? 120 : 0, {
@@ -154,7 +180,7 @@ const AnimatedPullToRefresh = () => {
           renderSkeletonView()
         ) : (
           <Animated.FlatList
-            data={data}
+            data={items}
             scrollEventThrottle={16}
             bounces={false}
             renderItem={renderItem}
@@ -167,6 +193,19 @@ const AnimatedPullToRefresh = () => {
             onScroll={scrollHandler}
             showsVerticalScrollIndicator={false}
             overScrollMode="never"
+            onEndReached={loadMoreData}
+            onEndReachedThreshold={0.5} // Load more when reaching 50% from the end
+            ListFooterComponent={() =>
+              isLoadingMore ? (
+                <LottieView
+                  source={require('./9.json')}
+                  autoPlay
+                  loop
+                  speed={0.5}
+                  style={styles.loaderMoreAnimation}
+                />
+              ) : null
+            }
             ListHeaderComponent={
               <>
                 <HarryPotterHeaderComponent
@@ -214,6 +253,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width,
     position: 'absolute',
+  },
+  loaderMoreAnimation: {
+    width,
+    height: 300,
   },
   title: {
     width: 180,
