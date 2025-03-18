@@ -1,4 +1,5 @@
-import React, { useRef, useCallback, memo } from 'react';
+/* eslint-disable react/no-unstable-nested-components */
+import React, {useRef, useCallback, useState, memo} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,9 +8,8 @@ import {
   PanResponder,
   Dimensions,
   StatusBar,
-  Platform,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -17,25 +17,29 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import data from './data';
+import {
+  HarryPotterGridComponent,
+  HarryPotterHeaderComponent,
+} from '../HarryPotterUI';
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 const AnimatedPullToRefresh = () => {
   const scrollPosition = useSharedValue(0);
   const insets = useSafeAreaInsets();
   const pullDownPosition = useSharedValue(0);
   const isReadyToRefresh = useSharedValue(false);
-  const isLoaderActive = useSharedValue(false);
+  const [isLoaderActive, setIsLoaderActive] = useState(false);
 
-  const onRefresh = useCallback((done) => {
-    isLoaderActive.value = true;
-
+  const onRefresh = useCallback(done => {
+    setIsLoaderActive(true);
     setTimeout(() => {
-      isLoaderActive.value = false;
+      setIsLoaderActive(false);
       isReadyToRefresh.value = false;
       done();
-    }, 5000);
+    }, 3000);
   }, []);
 
   const onPanRelease = () => {
@@ -46,7 +50,7 @@ const AnimatedPullToRefresh = () => {
     if (isReadyToRefresh.value) {
       isReadyToRefresh.value = false;
       onRefresh(() => {
-        pullDownPosition.value = withTiming(0, { duration: 180 });
+        pullDownPosition.value = withTiming(0, {duration: 180});
       });
     }
   };
@@ -73,13 +77,13 @@ const AnimatedPullToRefresh = () => {
   );
 
   const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
+    onScroll: event => {
       scrollPosition.value = event.contentOffset.y;
     },
   });
 
   const pullDownStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: pullDownPosition.value }],
+    transform: [{translateY: pullDownPosition.value}],
   }));
 
   const refreshContainerStyle = useAnimatedStyle(() => ({
@@ -88,8 +92,35 @@ const AnimatedPullToRefresh = () => {
     top: pullDownPosition.value - 200,
   }));
 
+  const renderSkeletonView = () => {
+    return (
+      <View style={styles.skeletonContainer}>
+        {[1, 2, 3, 4, 5, 6].map((_, index) => (
+          <SkeletonPlaceholder key={index} backgroundColor="#333">
+            <SkeletonPlaceholder.Item
+              flexDirection="column"
+              alignItems="center"
+              style={{marginBottom: 20}}>
+              <SkeletonPlaceholder.Item
+                width={160}
+                height={240}
+                borderRadius={8}
+              />
+              <SkeletonPlaceholder.Item
+                width={120}
+                height={20}
+                marginTop={15}
+              />
+              <SkeletonPlaceholder.Item width={90} height={15} marginTop={10} />
+            </SkeletonPlaceholder.Item>
+          </SkeletonPlaceholder>
+        ))}
+      </View>
+    );
+  };
+
   const renderItem = useCallback(
-    ({ item }) => (
+    ({item}) => (
       <View>
         <Image source={item.image} style={styles.image} resizeMode="cover" />
         <Text style={styles.title}>{item.title}</Text>
@@ -116,23 +147,39 @@ const AnimatedPullToRefresh = () => {
         style={[
           pullDownStyle,
           styles.pullDownStyles,
-          { paddingTop: Math.max(insets.top, 15) },
+          {paddingTop: Math.max(insets.top, 15)},
         ]}
-        {...panResponderRef.current.panHandlers}
-      >
-        <Animated.FlatList
-          data={data}
-          scrollEventThrottle={16}
-          renderItem={renderItem}
-          keyExtractor={(_, index) => index.toString()}
-          ItemSeparatorComponent={() => (
-            <View style={styles.itemSeparatorStyle} />
-          )}
-          onScroll={scrollHandler}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          overScrollMode="never"
-        />
+        {...panResponderRef.current.panHandlers}>
+        {isLoaderActive ? (
+          renderSkeletonView()
+        ) : (
+          <Animated.FlatList
+            data={data}
+            scrollEventThrottle={16}
+            bounces={false}
+            renderItem={renderItem}
+            key={2}
+            numColumns={2}
+            keyExtractor={(_, index) => index.toString()}
+            ItemSeparatorComponent={() => (
+              <View style={styles.itemSeparatorStyle} />
+            )}
+            onScroll={scrollHandler}
+            showsVerticalScrollIndicator={false}
+            overScrollMode="never"
+            ListHeaderComponent={
+              <>
+                <HarryPotterHeaderComponent
+                  rowContainerAlt={{marginTop: 20}}
+                  textInputRowAlt={{marginBottom: 20}}
+                />
+                <HarryPotterGridComponent
+                  contentContainerStyle={{paddingBottom: 90}}
+                />
+              </>
+            }
+          />
+        )}
       </Animated.View>
     </View>
   );
@@ -182,5 +229,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     marginBottom: 10,
+  },
+  skeletonContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    paddingHorizontal: 10,
+    paddingTop: 20,
   },
 });

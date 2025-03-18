@@ -71,6 +71,70 @@ const data = [
       'The final battle at Hogwarts unfolds as Harry faces Voldemort in a climactic showdown to determine the fate of the wizarding world.',
     image: require('../../assets/images/harryPotter/8.jpg'),
   },
+  {
+    id: 9,
+    title: 'Image 1',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./001.jpg'),
+  },
+  {
+    id: 10,
+    title: 'Image 2',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./002.jpg'),
+  },
+  {
+    id: 11,
+    title: 'Image 3',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./003.jpg'),
+  },
+  {
+    id: 12,
+    title: 'Image 4',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./004.jpg'),
+  },
+  {
+    id: 13,
+    title: 'Image 5',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./005.jpg'),
+  },
+  {
+    id: 14,
+    title: 'Image 6',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./006.jpg'),
+  },
+  {
+    id: 15,
+    title: 'Image 7',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./007.jpg'),
+  },
+  {
+    id: 16,
+    title: 'Image 8',
+    year: 2011,
+    director: 'David Yates',
+    summary: 'Image representation.',
+    image: require('./008.jpg'),
+  },
 ];
 
 export default data;
@@ -84,8 +148,8 @@ export const images = [
     id: 1,
     images: require('./2.png'),
   },
-//   {
-//     id: 1,
-//     images: require('./3.png'),
-//   },
+  {
+    id: 1,
+    images: require('./3.png'),
+  },
 ];
