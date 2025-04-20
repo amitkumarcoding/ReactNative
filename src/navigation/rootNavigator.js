@@ -25,6 +25,9 @@ import Leaderboard from '../components/LeaderboardView';
 import MultiSlider from '../components/MultiSlider';
 import AnimatedPullToRefresh from '../components/AnimatedPullToReferesh';
 import HarryPotterUI from '../components/HarryPotterUI';
+import HarryPotterView from '../components/HarryPotterView';
+import WithInBottomScreen from '../screens/WithInBottomScreen';
+import UseStateHooks from '../components/Hooks/useState';
 
 const Stack = createStackNavigator();
 
@@ -34,23 +37,35 @@ const LoginStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen name="Todo" component={ToDoComponent} />
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="FullScreen" component={StackFullScreen} />
       <Stack.Screen name="DetailScreen" component={CoffeeDetailScreen} />
       <Stack.Screen name="OrderScreen" component={CoffeeOrderScreen} />
       <Stack.Screen name="MapScreen" component={CoffeeMapView} />
       <Stack.Screen name="VerticalCard" component={VerticalScrollableCard} />
-      <Stack.Screen name='Todo' component={ToDoComponent} />
-      <Stack.Screen name='Reel' component={ReelComponent} />
-      <Stack.Screen name='ImageView' component={ImageView} />
-      <Stack.Screen name='GalleryView' component={GalleryView} />
-      <Stack.Screen name='Carousel' component={CarouselWithLeftRightPartialVisible} />
-      <Stack.Screen name="GalleryCarousel" component={GalleryCarouselWithLeftRightPartialVisible} />
+
+      <Stack.Screen name="Reel" component={ReelComponent} />
+      <Stack.Screen name="ImageView" component={ImageView} />
+      <Stack.Screen name="GalleryView" component={GalleryView} />
+      <Stack.Screen
+        name="Carousel"
+        component={CarouselWithLeftRightPartialVisible}
+      />
+      <Stack.Screen
+        name="GalleryCarousel"
+        component={GalleryCarouselWithLeftRightPartialVisible}
+      />
       <Stack.Screen name="ParallaxView" component={ParallaxView} />
       <Stack.Screen name="Leaderboard" component={Leaderboard} />
       <Stack.Screen name="MultiSlider" component={MultiSlider} />
-      <Stack.Screen name="AnimatedPullToRefresh" component={AnimatedPullToRefresh} />
+      <Stack.Screen
+        name="AnimatedPullToRefresh"
+        component={AnimatedPullToRefresh}
+      />
       <Stack.Screen name="HarryPotterUI" component={HarryPotterUI} />
+      <Stack.Screen name="HarryPotterView" component={HarryPotterView} />
+      <Stack.Screen name="UseStateHooks" component={UseStateHooks} />
       <Stack.Screen
         name="CarouselCard"
         component={CarouselBackgroundAnimation}

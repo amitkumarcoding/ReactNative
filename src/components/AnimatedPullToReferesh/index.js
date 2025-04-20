@@ -17,7 +17,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+// import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import data from './data';
 import {
   HarryPotterGridComponent,
@@ -121,7 +121,7 @@ const AnimatedPullToRefresh = () => {
   const renderSkeletonView = () => {
     return (
       <View style={styles.skeletonContainer}>
-        {[1, 2, 3, 4, 5, 6].map((_, index) => (
+        {/* {[1, 2, 3, 4, 5, 6].map((_, index) => (
           <SkeletonPlaceholder key={index} backgroundColor="#333">
             <SkeletonPlaceholder.Item
               flexDirection="column"
@@ -140,7 +140,7 @@ const AnimatedPullToRefresh = () => {
               <SkeletonPlaceholder.Item width={90} height={15} marginTop={10} />
             </SkeletonPlaceholder.Item>
           </SkeletonPlaceholder>
-        ))}
+        ))} */}
       </View>
     );
   };

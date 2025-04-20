@@ -46,3 +46,8 @@ export {default as CloseIcon} from '../assets/svgs/cross.svg';
 export {default as RotateIcon} from '../assets/svgs/rotate.svg';
 export {default as NotificationIcon} from '../assets/svgs/notification.svg';
 export {default as SearchIconAlt} from '../assets/svgs/search copy.svg';
+export {default as AddButton} from '../assets/svgs/addBtn.svg';
+export {default as DeleteIcon} from '../assets/svgs/TrashSimple.svg';
+export {default as TickIconAlt} from '../assets/svgs/Check.svg';
+export {default as CrossIconAlt} from '../assets/svgs/crossAlt.svg';
+export {default as GreenTick} from '../assets/svgs/greenTick.svg';

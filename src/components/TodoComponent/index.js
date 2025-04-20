@@ -1,81 +1,150 @@
+import React, {useCallback, useState, useRef, useEffect} from 'react';
 import {
-  View,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  FlatList,
-  StyleSheet,
-  SafeAreaView,
+  View,
 } from 'react-native';
-import React, {useState} from 'react';
+import {AddButton} from '../../assets';
+import ListView from './ListView';
+import ToastContainer from './ToastContainer';
 
 const ToDoComponent = () => {
-  const [input, setInput] = useState('');
   const [data, setData] = useState([]);
+  const [input, setInput] = useState('');
+  const [showToast, setToast] = useState(false);
 
-  const deleteTask = taskId => {
-    const filterData = data.filter(item => item.id !== taskId);
-    setData(filterData);
-  };
+  let dataRef = useRef([]);
+  let inputRef = useRef(null);
+  let openRowRef = useRef(null);
+  let editingIdRef = useRef(null);
+  let isContentDeletedRef = useRef(false);
+  let isContentUpdatedRef = useRef(false);
 
-  const toggleTask = id => {};
 
-  const onTextPress = (taskTitle, taskId) => {
-    console.log('title>>>', taskTitle);
-    setInput(taskTitle)
+  useEffect(() => {
+    console.log('isContentDeletedRef', isContentDeletedRef.current)
+    // console.log('object', isContentUpdatedRef.current, isContentDeletedRef.current)
+    // if (isContentUpdatedRef.current || isContentDeletedRef.current) {
+    //   console.log('inside fas')
+    //   setTimeout(() => {
+    //     setToast(false);
+    //   }, 4000);
+    // }
+  }, [isContentDeletedRef]);
 
-    setData(prevData => prevData.map(item => item.id === taskId ? {...item, text: taskTitle} : item))
-  };
 
-  const renderItem = ({item, index}) => {
-    console.log('item-----', item);
-    return (
-      <View style={styles.taskContainer}>
-        <TouchableOpacity onPress={() => toggleTask(item.id)}>
-          <Text style={[styles.check, item.completed && styles.completedCheck]}>
-            ✔
-          </Text>
-        </TouchableOpacity>
-        <Text
-          onPress={() => onTextPress(item.text, item.id)}
-          style={[styles.taskText, item.completed && styles.completedText]}>
-          {item.text}
-        </Text>
-        <TouchableOpacity onPress={() => deleteTask(item.id)}>
-          <Text style={styles.delete}>✖</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
 
-  const onSendPress = () => {
-    setData(prevData => [
-      ...prevData,
-      {id: Date.now().toString(), text: input, completed: false},
-    ]);
+  const onSendPress = useCallback(() => {
+    const trimmedInput = input.trim();
+    if (!trimmedInput) {
+      return;
+    }
+    openRowRef.current?.close();
+    if (isContentUpdatedRef.current) {
+      setToast(true);
+
+      isContentUpdatedRef.current = false;
+    } else {
+      setToast(false);
+    }
+    if (editingIdRef.current !== null) {
+      setData(prev =>
+        prev.map(task =>
+          task.id === editingIdRef.current
+            ? {...task, text: trimmedInput}
+            : task,
+        ),
+      );
+      editingIdRef.current = null;
+    } else {
+      setData(prev => [...prev, {id: Date.now(), text: trimmedInput}]);
+    }
+
     setInput('');
+  }, [input, editingIdRef, isContentUpdatedRef]);
+
+  const onDeletePress = useCallback(taskId => {
+    console.log('delete press')
+    isContentDeletedRef.current = true;
+    console.log('isContentDeletedRef0000', isContentDeletedRef.current)
+      setToast(true);
+      dataRef.current = data;
+      setData(prev => prev.filter(task => task.id !== taskId));
+      
+    },
+    [data, isContentDeletedRef],
+  );
+
+  const onContentPress = useCallback(
+    (taskId, taskText, isAnyContentUpdated) => {
+      isContentUpdatedRef.current = isAnyContentUpdated;
+      editingIdRef.current = taskId;
+      setInput(taskText);
+      inputRef.current?.focus();
+    },
+    [],
+  );
+
+  const renderItem = useCallback(
+    ({item, index}) => (
+      <ListView
+        item={item}
+        onContentPress={onContentPress}
+        onDeletePress={onDeletePress}
+        index={index}
+        openRowRef={openRowRef}
+        setInput={setInput}
+      />
+    ),
+    [onContentPress, onDeletePress],
+  );
+
+  const onUndoPress = () => {
+    setToast(false);
+
+    isContentDeletedRef.current = false;
+    setData(dataRef.current);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Simple Todo</Text>
+      <Text style={styles.heading}>Simple Todo</Text>
+
       <FlatList
         data={data}
-        keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.listContent}
+        bounces={false}
+        showsVerticalScrollIndicator={false}
       />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Add a new task"
-          value={input}
-          onChangeText={val => {
-            console.log('>>', val);
-            setInput(val);
-          }}
+
+      {showToast && (
+        <ToastContainer
+          isContentUpdated={isContentUpdatedRef.current}
+          onCrossPress={() => setToast(false)}
+          isContentDeleted={isContentDeletedRef.current}
+          onUndoPress={onUndoPress}
         />
-        <TouchableOpacity style={styles.addButton} onPress={onSendPress}>
-          <Text style={styles.addButtonText}>+</Text>
+      )}
+
+      <View style={styles.bottomContainer}>
+        <View style={styles.textInputContainer}>
+          <TextInput
+            ref={inputRef}
+            value={input}
+            placeholder="Add a new Task"
+            placeholderTextColor="#777"
+            onChangeText={setInput}
+            style={styles.textInput}
+          />
+        </View>
+        <TouchableOpacity onPress={onSendPress}>
+          <AddButton />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -87,71 +156,39 @@ export default ToDoComponent;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6A0DAD',
+    backgroundColor: '#000',
+  },
+  heading: {
+    fontSize: 28,
+    textAlign: 'center',
+    fontWeight: '600',
+    color: '#fff',
+    marginVertical: 20,
+  },
+  listContent: {
+    paddingBottom: 150,
+  },
+
+  bottomContainer: {
+    position: 'absolute',
+    bottom: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#000',
     padding: 20,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  taskContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#9D50BB',
-    padding: 15,
+  textInputContainer: {
+    borderWidth: 1.5,
+    borderColor: '#3E1671',
+    marginLeft: 25,
+    marginRight: 15,
+    width: '75%',
+    paddingVertical: 12,
     borderRadius: 10,
-    marginBottom: 10,
+    backgroundColor: '#000',
   },
-  check: {
-    fontSize: 20,
-    color: 'white',
-    marginRight: 10,
-  },
-  completedCheck: {
-    textDecorationLine: 'line-through',
-  },
-  taskText: {
-    flex: 1,
-    fontSize: 18,
-    color: 'white',
-  },
-  completedText: {
-    textDecorationLine: 'line-through',
-    color: '#D3D3D3',
-  },
-  delete: {
-    fontSize: 20,
-    color: 'red',
-    marginLeft: 10,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 50,
-    paddingHorizontal: 15,
-    marginHorizontal: 15,
-    marginTop: 10,
-    paddingVertical: 8,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    paddingVertical: 10,
-  },
-  addButton: {
-    backgroundColor: '#9D50BB',
-    height: 30,
-    width: 30,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addButtonText: {
-    fontSize: 24,
-    color: 'white',
+  textInput: {
+    paddingLeft: 20,
+    color: '#fff',
   },
 });
