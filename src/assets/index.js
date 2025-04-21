@@ -60,5 +60,9 @@ export {default as CheckedBox} from '../assets/svgs/checkedBox.svg';
 export {default as UnCheckedBox} from '../assets/svgs/unCheckbox.svg';
 export {default as SelectAll} from '../assets/svgs/select-all.svg';
 export {default as DeleteAllIcon} from '../assets/svgs/deleteAll.svg';
-export {default as SelectAllIcon } from '../assets/svgs/select-allAlt.svg';
-export {default as SettingAltNewIcon } from '../assets/svgs/settingAltNew.svg';
+export {default as SelectAllIcon} from '../assets/svgs/select-allAlt.svg';
+export {default as SettingAltNewIcon} from '../assets/svgs/settingAltNew.svg';
+
+export {default as GBacKIcon} from '../assets/svgs/Grocery/Back.svg';
+export {default as GSearchIcon} from '../assets/svgs/Grocery/Search.svg';
+export {default as GMenuIcon} from '../assets/svgs/Grocery/Menu.svg';

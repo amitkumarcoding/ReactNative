@@ -26,8 +26,8 @@ import MultiSlider from '../components/MultiSlider';
 import AnimatedPullToRefresh from '../components/AnimatedPullToReferesh';
 import HarryPotterUI from '../components/HarryPotterUI';
 import HarryPotterView from '../components/HarryPotterView';
-import WithInBottomScreen from '../screens/WithInBottomScreen';
 import UseStateHooks from '../components/Hooks/useState';
+import Grocery from '../components/Grocery';
 
 const Stack = createStackNavigator();
 
@@ -37,7 +37,9 @@ const LoginStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Todo" component={ToDoComponent} />
+        <Stack.Screen name="Todo" component={ToDoComponent} />
+      <Stack.Screen name="Grocery" component={Grocery} />
+      
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="FullScreen" component={StackFullScreen} />
       <Stack.Screen name="DetailScreen" component={CoffeeDetailScreen} />

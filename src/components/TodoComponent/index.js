@@ -3,39 +3,32 @@ import {
   FlatList,
   SafeAreaView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  AddButton,
-  CrossIconAlt,
-  DeleteAllIcon,
-  NoData,
-  SelectAllIcon,
-  SettingAltNewIcon,
-  TrashIcon,
-} from '../../assets';
+import {AddButton, NoData} from '../../assets';
 import ListView from './ListView';
 import ToastContainer from './ToastContainer';
+import HeaderComponent from './Header';
+import SearchComponent from './SearchComponent';
 
 const ToDoComponent = () => {
   const [data, setData] = useState([]);
   const [input, setInput] = useState('');
   const [showToast, setToast] = useState(false);
-  const [editingId, setEditingId] = useState(null);
   const [hideIcons, setHideIcons] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [originalData, setOriginalData] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
   const [isSelectAllPress, setSelectAllPress] = useState(false);
   const [showSingleDeleteIcon, setShowSingleDeleteIcon] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
 
   let dataRef = useRef([]);
-  let intervalRef = useRef(null);
   let inputRef = useRef(null);
   let openRowRef = useRef(null);
   let deletingIdRef = useRef([]);
-
+  let intervalRef = useRef(null);
   let isContentDeletedRef = useRef(false);
   let isContentUpdatedRef = useRef(false);
 
@@ -74,15 +67,23 @@ const ToDoComponent = () => {
     } else {
       setToast(false);
     }
+
     if (editingId !== null) {
-      setData(prev =>
-        prev.map(task =>
+      setData(prev => {
+        const updated = prev.map(task =>
           task.id === editingId ? {...task, text: trimmedInput} : task,
-        ),
-      );
+        );
+        setOriginalData(updated);
+        return updated;
+      });
       setEditingId(null);
     } else {
-      setData(prev => [...prev, {id: Date.now(), text: trimmedInput}]);
+      const newTask = {id: Date.now(), text: trimmedInput};
+      setData(prev => {
+        const updated = [...prev, newTask];
+        setOriginalData(updated);
+        return updated;
+      });
     }
 
     setInput('');
@@ -93,7 +94,12 @@ const ToDoComponent = () => {
       isContentDeletedRef.current = true;
       setToast(true);
       dataRef.current = data;
-      setData(prev => prev.filter(task => task.id !== taskId));
+
+      setData(prev => {
+        const updated = prev.filter(task => task.id !== taskId);
+        setOriginalData(updated); // Keep originalData updated
+        return updated;
+      });
     },
     [data, isContentDeletedRef],
   );
@@ -155,6 +161,7 @@ const ToDoComponent = () => {
 
     isContentDeletedRef.current = false;
     setData(dataRef.current);
+    setOriginalData(dataRef.current);
   };
 
   const onDeleteContentPress = () => {
@@ -167,9 +174,13 @@ const ToDoComponent = () => {
       setHideIcons(true);
     }
 
-    setData(prev =>
-      prev.filter(task => !deletingIdRef.current.includes(task.id)),
-    );
+    setData(prev => {
+      const updated = prev.filter(
+        task => !deletingIdRef.current.includes(task.id),
+      );
+      setOriginalData(updated);
+      return updated;
+    });
   };
   const onHeaderCrossPress = () => {
     deletingIdRef.current = [];
@@ -189,47 +200,31 @@ const ToDoComponent = () => {
     }
   };
 
+  const onSearch = val => {
+    const lowercasedValue = val.toLowerCase();
+    if (lowercasedValue === '') {
+      setData(originalData);
+    } else {
+      const filteredData = originalData.filter(item =>
+        item.text.toLowerCase().includes(lowercasedValue),
+      );
+      setData(filteredData);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.rowContainer}>
-        {!hideIcons && (
-          <TouchableOpacity onPress={onHeaderCrossPress}>
-            <CrossIconAlt />
-          </TouchableOpacity>
-        )}
-        {!hideIcons ? (
-          <Text
-            style={[
-              styles.heading,
-              {textAlign: 'left', fontSize: 22},
-            ]}>{`${selectedItems.length} Selected`}</Text>
-        ) : (
-          <Text style={styles.heading}>Simple Todo</Text>
-        )}
+      <HeaderComponent
+        data={data}
+        hideIcons={hideIcons}
+        onDeleteContentPress={onDeleteContentPress}
+        onHeaderCrossPress={onHeaderCrossPress}
+        onSelectAllPress={onSelectAllPress}
+        selectedItems={selectedItems}
+        showSingleDeleteIcon={showSingleDeleteIcon}
+      />
 
-        {hideIcons && (
-          <TouchableOpacity style={{marginRight: 15}}>
-            <SettingAltNewIcon width={24} height={24} />
-          </TouchableOpacity>
-        )}
-
-        {!hideIcons && (
-          <TouchableOpacity
-            onPress={onSelectAllPress}
-            style={{marginRight: 15}}>
-            <SelectAllIcon width={24} height={24} />
-          </TouchableOpacity>
-        )}
-        {data.length > 0 && (
-          <TouchableOpacity onPress={onDeleteContentPress}>
-            {showSingleDeleteIcon ? (
-              <TrashIcon width={24} height={24} />
-            ) : (
-              <DeleteAllIcon width={30} height={30} />
-            )}
-          </TouchableOpacity>
-        )}
-      </View>
+      <SearchComponent onSearch={onSearch} />
 
       {data?.length === 0 ? (
         <NoData />
@@ -283,14 +278,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  heading: {
-    fontSize: 26,
-    textAlign: 'center',
-    fontWeight: '600',
-    color: '#fff',
-    marginVertical: 20,
-    flex: 1,
-  },
+
   listContent: {
     paddingBottom: 150,
   },
@@ -316,10 +304,5 @@ const styles = StyleSheet.create({
   textInput: {
     paddingLeft: 20,
     color: '#fff',
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 30,
   },
 });
