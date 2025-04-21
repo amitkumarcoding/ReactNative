@@ -8,7 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {AddButton} from '../../assets';
+import {
+  AddButton,
+  CrossIconAlt,
+  DeleteAllIcon,
+  NoData,
+  SearchIconAltNew,
+  SettingAltNewIcon,
+  TrashIcon,
+} from '../../assets';
 import ListView from './ListView';
 import ToastContainer from './ToastContainer';
 
@@ -16,33 +24,46 @@ const ToDoComponent = () => {
   const [data, setData] = useState([]);
   const [input, setInput] = useState('');
   const [showToast, setToast] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [hideIcons, setHideIcons] = useState(true);
+  const [isSelectAllPress, setSelectAllPress] = useState(false);
+  const [showSingleDeleteIcon, setShowSingleDeleteIcon] = useState(false);
 
   let dataRef = useRef([]);
+  let intervalRef = useRef(null);
   let inputRef = useRef(null);
   let openRowRef = useRef(null);
-  let editingIdRef = useRef(null);
+  let deletingIdRef = useRef([]);
+
   let isContentDeletedRef = useRef(false);
   let isContentUpdatedRef = useRef(false);
 
+  useEffect(() => {
+    if (data.length === 0) {
+      setHideIcons(true);
+    }
+  }, [data]);
 
   useEffect(() => {
-    console.log('isContentDeletedRef', isContentDeletedRef.current)
-    // console.log('object', isContentUpdatedRef.current, isContentDeletedRef.current)
-    // if (isContentUpdatedRef.current || isContentDeletedRef.current) {
-    //   console.log('inside fas')
-    //   setTimeout(() => {
-    //     setToast(false);
-    //   }, 4000);
-    // }
-  }, [isContentDeletedRef]);
+    if (showToast) {
+      intervalRef.current = setTimeout(() => {
+        setToast(false);
+      }, 4000);
+    }
 
-
+    return () => {
+      if (intervalRef.current) {
+        clearTimeout(intervalRef.current);
+      }
+    };
+  }, [showToast]);
 
   const onSendPress = useCallback(() => {
     const trimmedInput = input.trim();
     if (!trimmedInput) {
       return;
     }
+    isContentDeletedRef.current = false;
     openRowRef.current?.close();
     if (isContentUpdatedRef.current) {
       setToast(true);
@@ -51,30 +72,26 @@ const ToDoComponent = () => {
     } else {
       setToast(false);
     }
-    if (editingIdRef.current !== null) {
+    if (editingId !== null) {
       setData(prev =>
         prev.map(task =>
-          task.id === editingIdRef.current
-            ? {...task, text: trimmedInput}
-            : task,
+          task.id === editingId ? {...task, text: trimmedInput} : task,
         ),
       );
-      editingIdRef.current = null;
+      setEditingId(null);
     } else {
       setData(prev => [...prev, {id: Date.now(), text: trimmedInput}]);
     }
 
     setInput('');
-  }, [input, editingIdRef, isContentUpdatedRef]);
+  }, [input, editingId, isContentUpdatedRef, isContentDeletedRef]);
 
-  const onDeletePress = useCallback(taskId => {
-    console.log('delete press')
-    isContentDeletedRef.current = true;
-    console.log('isContentDeletedRef0000', isContentDeletedRef.current)
+  const onDeletePress = useCallback(
+    taskId => {
+      isContentDeletedRef.current = true;
       setToast(true);
       dataRef.current = data;
       setData(prev => prev.filter(task => task.id !== taskId));
-      
     },
     [data, isContentDeletedRef],
   );
@@ -82,12 +99,16 @@ const ToDoComponent = () => {
   const onContentPress = useCallback(
     (taskId, taskText, isAnyContentUpdated) => {
       isContentUpdatedRef.current = isAnyContentUpdated;
-      editingIdRef.current = taskId;
+      setEditingId(taskId);
       setInput(taskText);
       inputRef.current?.focus();
     },
     [],
   );
+
+  const onSelectedDeleteContent = deleteId => {
+    deletingIdRef.current.push(deleteId);
+  };
 
   const renderItem = useCallback(
     ({item, index}) => (
@@ -98,37 +119,113 @@ const ToDoComponent = () => {
         index={index}
         openRowRef={openRowRef}
         setInput={setInput}
+        data={data}
+        hideIcons={hideIcons}
+        isSelectAllPress={isSelectAllPress}
+        selectedDeleteContent={onSelectedDeleteContent}
       />
     ),
-    [onContentPress, onDeletePress],
+    [onContentPress, onDeletePress, data, hideIcons, isSelectAllPress],
   );
 
   const onUndoPress = () => {
+    clearTimeout(intervalRef.current);
     setToast(false);
 
     isContentDeletedRef.current = false;
     setData(dataRef.current);
   };
 
+  const onDeleteContentPress = () => {
+    setShowSingleDeleteIcon(true);
+
+    setHideIcons(false);
+    if (isSelectAllPress) {
+      setData([]);
+      setSelectAllPress(false);
+      setHideIcons(true);
+    }
+
+    setData(prev =>
+      prev.filter(task => !deletingIdRef.current.includes(task.id)),
+    );
+  };
+  const onHeaderCrossPress = () => {
+    deletingIdRef.current = [];
+    setSelectAllPress(false);
+    setShowSingleDeleteIcon(false);
+    setHideIcons(true);
+  };
+
+  const onSelectAllPress = () => {
+    setSelectAllPress(!isSelectAllPress);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Simple Todo</Text>
+      <View style={styles.rowContainer}>
+        {!hideIcons && (
+          <TouchableOpacity onPress={onHeaderCrossPress}>
+            <CrossIconAlt />
+          </TouchableOpacity>
+        )}
+        {!hideIcons ? (
+          <Text
+            style={[
+              styles.heading,
+              {textAlign: 'left', fontSize: 22},
+            ]}>{`${deletingIdRef.current.length} Selected`}</Text>
+        ) : (
+          <Text style={styles.heading}>Simple Todo</Text>
+        )}
 
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-        contentContainerStyle={styles.listContent}
-        bounces={false}
-        showsVerticalScrollIndicator={false}
-      />
+        {hideIcons && (
+          <TouchableOpacity style={{marginRight: 15}}>
+            <SettingAltNewIcon width={24} height={24} />
+          </TouchableOpacity>
+        )}
+
+        {!hideIcons && (
+          <TouchableOpacity
+            onPress={onSelectAllPress}
+            style={{marginRight: 15}}>
+            <SearchIconAltNew width={24} height={24} />
+          </TouchableOpacity>
+        )}
+        {data.length > 0 && (
+          <TouchableOpacity onPress={onDeleteContentPress}>
+            {showSingleDeleteIcon ? (
+              <TrashIcon width={24} height={24} />
+            ) : (
+              <DeleteAllIcon width={30} height={30} />
+            )}
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {data?.length === 0 ? (
+        <NoData />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={item => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
 
       {showToast && (
         <ToastContainer
           isContentUpdated={isContentUpdatedRef.current}
-          onCrossPress={() => setToast(false)}
+          onCrossPress={() => {
+            setToast(false);
+            clearTimeout(intervalRef.current);
+          }}
           isContentDeleted={isContentDeletedRef.current}
           onUndoPress={onUndoPress}
+          data={data}
         />
       )}
 
@@ -159,11 +256,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   heading: {
-    fontSize: 28,
+    fontSize: 26,
     textAlign: 'center',
     fontWeight: '600',
     color: '#fff',
     marginVertical: 20,
+    flex: 1,
   },
   listContent: {
     paddingBottom: 150,
@@ -190,5 +288,10 @@ const styles = StyleSheet.create({
   textInput: {
     paddingLeft: 20,
     color: '#fff',
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 30,
   },
 });

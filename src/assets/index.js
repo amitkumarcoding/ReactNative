@@ -51,3 +51,14 @@ export {default as DeleteIcon} from '../assets/svgs/TrashSimple.svg';
 export {default as TickIconAlt} from '../assets/svgs/Check.svg';
 export {default as CrossIconAlt} from '../assets/svgs/crossAlt.svg';
 export {default as GreenTick} from '../assets/svgs/greenTick.svg';
+
+export {default as NoData} from '../assets/svgs/nodata.svg';
+export {default as NoData2} from '../assets/svgs/nodata2.svg';
+export {default as TrashIcon} from '../assets/svgs/trash.svg';
+
+export {default as CheckedBox} from '../assets/svgs/checkedBox.svg';
+export {default as UnCheckedBox} from '../assets/svgs/unCheckbox.svg';
+export {default as SelectAll} from '../assets/svgs/select-all.svg';
+export {default as DeleteAllIcon} from '../assets/svgs/deleteAll.svg';
+export {default as SearchIconAltNew } from '../assets/svgs/select-allAlt.svg';
+export {default as SettingAltNewIcon } from '../assets/svgs/settingAltNew.svg';

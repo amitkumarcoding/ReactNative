@@ -1,18 +1,43 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Animated,
+  useAnimatedValue,
+} from 'react-native';
+import React, {useEffect} from 'react';
 import {CrossIconAlt, GreenTick} from '../../assets';
 
 const ToastContainer = ({
-  isContentDeleted = false,
-  onCrossPress = () => {},
+  data = [],
   onUndoPress = () => {},
+  onCrossPress = () => {},
+  isContentDeleted = false,
 }) => {
+  const fillAnim = useAnimatedValue(0);
+  useEffect(() => {
+    if (data) {
+      Animated.timing(fillAnim, {
+        toValue: 1,
+        duration: 4000,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [data, fillAnim]);
+
+  const animatedFill = fillAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '115%'],
+  });
+
   return (
     <View style={styles.toastContainer}>
       {!isContentDeleted && <GreenTick width={25} height={25} />}
       <Text style={styles.toastText}>Changes applied successfully!</Text>
       {isContentDeleted ? (
-        <TouchableOpacity style={styles.undoContainer} onPress={onUndoPress}>
+        <TouchableOpacity style={[styles.undoContainer]} onPress={onUndoPress}>
+          <Animated.View style={[styles.undoFill, {width: animatedFill}]} />
           <Text style={styles.toastText}>Undo</Text>
         </TouchableOpacity>
       ) : (
@@ -49,6 +74,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     borderRadius: 10,
     borderWidth: 1,
-    // borderColor: '#fff'
+  },
+  undoFill: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    overflow: 'hidden',
+    borderRadius: 10,
   },
 });

@@ -1,7 +1,13 @@
-import React, {useRef} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useAnimatedValue,
+  Animated,
+} from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
-import {DeleteIcon, EditIcon} from '../../assets';
+import {CheckedBox, DeleteIcon, EditIcon, UnCheckedBox} from '../../assets';
 
 const ListView = ({
   item,
@@ -10,8 +16,24 @@ const ListView = ({
   onDeletePress = () => {},
   openRowRef,
   setInput,
+  data,
+  hideIcons,
+  isSelectAllPress,
+  selectedDeleteContent = () => {},
 }) => {
   const swipeableRef = useRef(null);
+  const [isChecked, setChecked] = useState(false);
+  const fadeAnim = useAnimatedValue(0);
+
+  useEffect(() => {
+    if (data) {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [data, fadeAnim, onDeletePress]);
 
   const handleSwipeableOpen = () => {
     setInput('');
@@ -39,15 +61,38 @@ const ListView = ({
     </TouchableOpacity>
   );
 
+  const onSelectDeselect = deleteId => {
+    setChecked(!isChecked);
+
+    if (!isChecked) {
+      selectedDeleteContent(deleteId);
+    }
+  };
+
   return (
     <Swipeable
       ref={swipeableRef}
       onSwipeableOpen={handleSwipeableOpen}
       renderLeftActions={leftSwipe}
       renderRightActions={rightSwipe}>
-      <View key={index} style={styles.taskContainer}>
-        <Text style={styles.taskText}>{item.text}</Text>
-      </View>
+      <TouchableOpacity>
+        <Animated.View
+          key={index}
+          style={[styles.taskContainer, {opacity: fadeAnim}]}>
+          {!hideIcons && (
+            <TouchableOpacity
+              onPress={() => onSelectDeselect(item.id)}
+              style={{marginRight: 10}}>
+              {isSelectAllPress || isChecked ? (
+                <CheckedBox width={20} height={20} />
+              ) : (
+                <UnCheckedBox width={20} height={20} />
+              )}
+            </TouchableOpacity>
+          )}
+          <Text style={styles.taskText}>{item.text}</Text>
+        </Animated.View>
+      </TouchableOpacity>
     </Swipeable>
   );
 };
