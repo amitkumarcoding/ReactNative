@@ -60,6 +60,7 @@ const ToDoComponent = () => {
   }, [showToast]);
 
   const onSendPress = useCallback(() => {
+    setSelectedItems([]);
     const trimmedInput = input.trim();
     if (!trimmedInput) {
       return;
