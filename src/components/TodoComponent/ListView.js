@@ -20,10 +20,18 @@ const ListView = ({
   hideIcons,
   isSelectAllPress,
   selectedDeleteContent = () => {},
+  isHeaderCrossPress = () => {},
+  contentSelectedCount = 0,
 }) => {
   const swipeableRef = useRef(null);
   const [isChecked, setChecked] = useState(false);
   const fadeAnim = useAnimatedValue(0);
+
+  useEffect(() => {
+    if (isHeaderCrossPress) {
+      setChecked(false);
+    }
+  }, [isHeaderCrossPress]);
 
   useEffect(() => {
     if (data) {
@@ -67,6 +75,8 @@ const ListView = ({
     if (!isChecked) {
       selectedDeleteContent(deleteId);
     }
+
+    contentSelectedCount(item.text);
   };
 
   return (

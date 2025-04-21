@@ -60,5 +60,5 @@ export {default as CheckedBox} from '../assets/svgs/checkedBox.svg';
 export {default as UnCheckedBox} from '../assets/svgs/unCheckbox.svg';
 export {default as SelectAll} from '../assets/svgs/select-all.svg';
 export {default as DeleteAllIcon} from '../assets/svgs/deleteAll.svg';
-export {default as SearchIconAltNew } from '../assets/svgs/select-allAlt.svg';
+export {default as SelectAllIcon } from '../assets/svgs/select-allAlt.svg';
 export {default as SettingAltNewIcon } from '../assets/svgs/settingAltNew.svg';

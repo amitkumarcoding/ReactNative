@@ -13,7 +13,7 @@ import {
   CrossIconAlt,
   DeleteAllIcon,
   NoData,
-  SearchIconAltNew,
+  SelectAllIcon,
   SettingAltNewIcon,
   TrashIcon,
 } from '../../assets';
@@ -28,6 +28,7 @@ const ToDoComponent = () => {
   const [hideIcons, setHideIcons] = useState(true);
   const [isSelectAllPress, setSelectAllPress] = useState(false);
   const [showSingleDeleteIcon, setShowSingleDeleteIcon] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   let dataRef = useRef([]);
   let intervalRef = useRef(null);
@@ -106,8 +107,18 @@ const ToDoComponent = () => {
     [],
   );
 
-  const onSelectedDeleteContent = deleteId => {
+  const onSelectedDeleteContent = useCallback(deleteId => {
     deletingIdRef.current.push(deleteId);
+  }, []);
+
+  const contentSelectedCount = val => {
+    setSelectedItems(prevItems => {
+      if (prevItems.includes(val)) {
+        return prevItems.filter(item => item !== val);
+      } else {
+        return [...prevItems, val];
+      }
+    });
   };
 
   const renderItem = useCallback(
@@ -123,9 +134,18 @@ const ToDoComponent = () => {
         hideIcons={hideIcons}
         isSelectAllPress={isSelectAllPress}
         selectedDeleteContent={onSelectedDeleteContent}
+        isHeaderCrossPress={onHeaderCrossPress}
+        contentSelectedCount={contentSelectedCount}
       />
     ),
-    [onContentPress, onDeletePress, data, hideIcons, isSelectAllPress],
+    [
+      onContentPress,
+      onDeletePress,
+      data,
+      hideIcons,
+      isSelectAllPress,
+      onSelectedDeleteContent,
+    ],
   );
 
   const onUndoPress = () => {
@@ -155,10 +175,17 @@ const ToDoComponent = () => {
     setSelectAllPress(false);
     setShowSingleDeleteIcon(false);
     setHideIcons(true);
+    setSelectedItems([]);
   };
 
   const onSelectAllPress = () => {
     setSelectAllPress(!isSelectAllPress);
+
+    if (isSelectAllPress) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(data);
+    }
   };
 
   return (
@@ -174,7 +201,7 @@ const ToDoComponent = () => {
             style={[
               styles.heading,
               {textAlign: 'left', fontSize: 22},
-            ]}>{`${deletingIdRef.current.length} Selected`}</Text>
+            ]}>{`${selectedItems.length} Selected`}</Text>
         ) : (
           <Text style={styles.heading}>Simple Todo</Text>
         )}
@@ -189,7 +216,7 @@ const ToDoComponent = () => {
           <TouchableOpacity
             onPress={onSelectAllPress}
             style={{marginRight: 15}}>
-            <SearchIconAltNew width={24} height={24} />
+            <SelectAllIcon width={24} height={24} />
           </TouchableOpacity>
         )}
         {data.length > 0 && (
