@@ -35,6 +35,7 @@ export default TimerComponent;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
   },
   timerText: {
     fontSize: 40,

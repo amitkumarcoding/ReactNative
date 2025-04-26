@@ -28,6 +28,12 @@ import HarryPotterUI from '../components/HarryPotterUI';
 import HarryPotterView from '../components/HarryPotterView';
 import UseStateHooks from '../components/Hooks/useState';
 import Grocery from '../components/Grocery';
+import ListScreen from '../screens/ListScreen';
+import RouteName from './RouteName';
+import TimerComponent from '../components/Timer';
+import Throttling from '../components/Throttling';
+import DebouncingComponent from '../components/Debouncing';
+import LanguageComponent from '../components/LanguageComponent';
 
 const Stack = createStackNavigator();
 
@@ -37,39 +43,57 @@ const LoginStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
-        <Stack.Screen name="Todo" component={ToDoComponent} />
-      <Stack.Screen name="Grocery" component={Grocery} />
-      
+      <Stack.Screen name="ListScreen" component={ListScreen} />
+      <Stack.Screen name={RouteName.TODO} component={ToDoComponent} />
+      <Stack.Screen name={RouteName.GROCERY} component={Grocery} />
+
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="FullScreen" component={StackFullScreen} />
       <Stack.Screen name="DetailScreen" component={CoffeeDetailScreen} />
       <Stack.Screen name="OrderScreen" component={CoffeeOrderScreen} />
+      <Stack.Screen name={RouteName.LANGUAGE} component={LanguageComponent} />
+      <Stack.Screen name={RouteName.CAROUSEL_LEFT_RIGHT} component={CarouselWithLeftRightPartialVisible} />
       <Stack.Screen name="MapScreen" component={CoffeeMapView} />
-      <Stack.Screen name="VerticalCard" component={VerticalScrollableCard} />
-
-      <Stack.Screen name="Reel" component={ReelComponent} />
-      <Stack.Screen name="ImageView" component={ImageView} />
-      <Stack.Screen name="GalleryView" component={GalleryView} />
       <Stack.Screen
-        name="Carousel"
+        name={RouteName.DEBOUNCING}
+        component={DebouncingComponent}
+      />
+      <Stack.Screen name={RouteName.THROTTLING} component={Throttling} />
+      <Stack.Screen name={RouteName.TIMER} component={TimerComponent} />
+      <Stack.Screen
+        name={RouteName.VERTICAL_CARD}
+        component={VerticalScrollableCard}
+      />
+
+      <Stack.Screen name={RouteName.REEL} component={ReelComponent} />
+      <Stack.Screen name={RouteName.IMAGE_VIEW} component={ImageView} />
+      <Stack.Screen name={RouteName.GALLERY_VIEW} component={GalleryView} />
+      <Stack.Screen
+        name={RouteName.CAROUSEL}
         component={CarouselWithLeftRightPartialVisible}
       />
       <Stack.Screen
-        name="GalleryCarousel"
+        name={RouteName.GALLERY_CAROUSEL}
         component={GalleryCarouselWithLeftRightPartialVisible}
       />
-      <Stack.Screen name="ParallaxView" component={ParallaxView} />
+      <Stack.Screen name={RouteName.PARALLAX_VIEW} component={ParallaxView} />
       <Stack.Screen name="Leaderboard" component={Leaderboard} />
-      <Stack.Screen name="MultiSlider" component={MultiSlider} />
+      <Stack.Screen name={RouteName.MULTI_SLIDER} component={MultiSlider} />
       <Stack.Screen
-        name="AnimatedPullToRefresh"
+        name={RouteName.ANIMATED_PULL_TO_REFRESH}
         component={AnimatedPullToRefresh}
       />
-      <Stack.Screen name="HarryPotterUI" component={HarryPotterUI} />
-      <Stack.Screen name="HarryPotterView" component={HarryPotterView} />
+      <Stack.Screen
+        name={RouteName.HARRY_POTTER_UI}
+        component={HarryPotterUI}
+      />
+      <Stack.Screen
+        name={RouteName.HARRY_POTTER_VIEW}
+        component={HarryPotterView}
+      />
       <Stack.Screen name="UseStateHooks" component={UseStateHooks} />
       <Stack.Screen
-        name="CarouselCard"
+        name={RouteName.CAROUSEL_CARD}
         component={CarouselBackgroundAnimation}
       />
       <Stack.Screen

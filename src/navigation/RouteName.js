@@ -1,0 +1,21 @@
+export default {
+  REEL: 'Reel',
+  TODO: 'Todo',
+  GROCERY: 'Grocery',
+  IMAGE_VIEW: 'ImageView',
+  GALLERY_VIEW: 'GalleryView',
+  VERTICAL_CARD: 'VerticalCard',
+  CAROUSEL: 'Carousel',
+  GALLERY_CAROUSEL: 'GalleryCarousel',
+  PARALLAX_VIEW: 'ParallaxView',
+  MULTI_SLIDER: 'MultiSlider',
+  ANIMATED_PULL_TO_REFRESH: 'AnimatedPullToRefresh',
+  HARRY_POTTER_UI: 'HarryPotterUI',
+  HARRY_POTTER_VIEW: 'HarryPotterView',
+  CAROUSEL_CARD: 'CarouselCard',
+  TIMER: 'Timer',
+  THROTTLING: 'Throttling',
+  DEBOUNCING: 'Debouncing',
+  LANGUAGE: 'Language',
+  CAROUSEL_LEFT_RIGHT: 'CarouselLeftRight'
+};
