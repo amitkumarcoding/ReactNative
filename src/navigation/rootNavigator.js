@@ -33,7 +33,7 @@ import RouteName from './RouteName';
 import TimerComponent from '../components/Timer';
 import Throttling from '../components/Throttling';
 import DebouncingComponent from '../components/Debouncing';
-import LanguageComponent from '../components/LanguageComponent';
+import LanguageComponent from 'practice-components/LanguageComponent';
 
 const Stack = createStackNavigator();
 

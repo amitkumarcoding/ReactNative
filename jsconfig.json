@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "practice-components/*": ["src/components/*"],
+      "practice-screens/*": ["src/screens/*"],
+      "practice-assets/*": ["src/assets/*"],
+      "practice-navigation/*": ["src/navigation/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
